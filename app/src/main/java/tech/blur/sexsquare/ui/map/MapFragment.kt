@@ -1,4 +1,4 @@
-package tech.blur.sexsquare.ui.home
+package tech.blur.sexsquare.ui.map
 
 import android.Manifest
 import android.content.pm.PackageManager
@@ -15,38 +15,44 @@ import androidx.lifecycle.Observer
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.location.LocationServices
-import com.google.android.gms.maps.CameraUpdateFactory
-import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.OnMapReadyCallback
+import com.google.android.gms.maps.*
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.material.bottomsheet.BottomSheetBehavior
-import kotlinx.android.synthetic.main.fragment_home.view.*
+import kotlinx.android.synthetic.main.fragment_map.view.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import tech.blur.sexsquare.R
-import tech.blur.sexsquare.databinding.FragmentHomeBinding
+import tech.blur.sexsquare.databinding.FragmentMapBinding
+import java.lang.ref.WeakReference
 
-class HomeFragment : Fragment(),
+class MapFragment : Fragment(),
     OnMapReadyCallback,
     GoogleApiClient.ConnectionCallbacks,
     GoogleApiClient.OnConnectionFailedListener {
 
-    private val homeViewModel: HomeViewModel by viewModel()
+    private val mapViewModel: MapViewModel by viewModel()
 
     private lateinit var googleMap: GoogleMap
+
+    private var mapView: MapView? = null
 
     private lateinit var googleApiClient: GoogleApiClient
 
     private var mBottomSheetBehavior: BottomSheetBehavior<View?>? = null
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        retainInstance = true
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val binding = DataBindingUtil.inflate<FragmentHomeBinding>(
+        val binding = DataBindingUtil.inflate<FragmentMapBinding>(
             inflater,
-            R.layout.fragment_home,
+            R.layout.fragment_map,
             container,
             false
         )
@@ -54,27 +60,38 @@ class HomeFragment : Fragment(),
 
         val view = binding.root
 
-        view.mapView.onCreate(savedInstanceState)
+        if (mapView == null) {
+            mapView = MapView(context)
 
-        view.mapView.onResume() // needed to get the map to display immediately
+            mapView?.apply {
+                onCreate(savedInstanceState)
 
-        googleApiClient = GoogleApiClient.Builder(context!!)
-            .addConnectionCallbacks(this)
-            .addOnConnectionFailedListener(this)
-            .addApi(LocationServices.API)
-            .build()
-        googleApiClient.connect()
+                onResume()
 
+                getMapAsync(this@MapFragment)
 
-        view.mapView.getMapAsync(this)
+                layoutParams = ViewGroup.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.MATCH_PARENT
+                )
+            }
+            googleApiClient = GoogleApiClient.Builder(context!!)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(LocationServices.API)
+                .build()
+            googleApiClient.connect()
 
+        }
+
+        view.frameLayout_mapContainer_Map.addView(mapView)
         binding.executePendingBindings()
 
         return view
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        homeViewModel.text.observe(this, Observer {
+        mapViewModel.text.observe(this, Observer {
 
         })
 
