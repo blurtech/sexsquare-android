@@ -42,8 +42,6 @@ class MainActivity : AppCompatActivity() {
             return@setOnNavigationItemSelectedListener true
         }
 
-//        val navController = findNavController(R.id.nav_host_fragment)
-
         adapter = MainContentFragmentPagerAdapter(
             supportFragmentManager,
             MapFragment::class,
@@ -55,7 +53,6 @@ class MainActivity : AppCompatActivity() {
             offscreenPageLimit = (this@MainActivity).adapter.count
             adapter = (this@MainActivity).adapter
         }
-//        navView.setupWithNavController(navController)
     }
 
     private class MainContentFragmentPagerAdapter(

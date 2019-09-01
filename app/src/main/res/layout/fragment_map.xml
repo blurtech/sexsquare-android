@@ -12,29 +12,28 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-            <FrameLayout
-                android:id="@+id/frameLayout_mapContainer_Map"
+
+            <fragment
+                android:id="@+id/map_map"
+                android:name="com.google.android.gms.maps.SupportMapFragment"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"/>
-            <com.google.android.gms.maps.MapView
-                android:id="@+id/mapView"
-                android:layout_width="0dp"
                 android:layout_height="0dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                tools:context=".MainActivity"/>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <fragment
-                android:id="@+id/fragment_statistic_Home"
-                android:name="tech.blur.sexsquare.ui.statistics.StatisticsFragment"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                app:behavior_hideable="true"
-                app:behavior_peekHeight="50dp"
-                app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
-                tools:layout="@layout/fragment_statistics" />
+        <fragment
+            android:id="@+id/fragment_statistic_Home"
+            android:name="tech.blur.sexsquare.ui.statistics.StatisticsFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:behavior_hideable="true"
+            app:behavior_peekHeight="50dp"
+            app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
+            tools:layout="@layout/fragment_statistics" />
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>

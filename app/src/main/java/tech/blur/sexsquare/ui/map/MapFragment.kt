@@ -15,15 +15,16 @@ import androidx.lifecycle.Observer
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.location.LocationServices
-import com.google.android.gms.maps.*
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.material.bottomsheet.BottomSheetBehavior
-import kotlinx.android.synthetic.main.fragment_map.view.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import tech.blur.sexsquare.R
 import tech.blur.sexsquare.databinding.FragmentMapBinding
-import java.lang.ref.WeakReference
+import com.google.android.gms.maps.SupportMapFragment
+import tech.blur.sexsquare.R
 
 class MapFragment : Fragment(),
     OnMapReadyCallback,
@@ -33,8 +34,6 @@ class MapFragment : Fragment(),
     private val mapViewModel: MapViewModel by viewModel()
 
     private lateinit var googleMap: GoogleMap
-
-    private var mapView: MapView? = null
 
     private lateinit var googleApiClient: GoogleApiClient
 
@@ -60,31 +59,16 @@ class MapFragment : Fragment(),
 
         val view = binding.root
 
-        if (mapView == null) {
-            mapView = MapView(context)
+        val mapFragment = childFragmentManager.findFragmentById(R.id.map_map) as SupportMapFragment
+        mapFragment.getMapAsync(this)
 
-            mapView?.apply {
-                onCreate(savedInstanceState)
+        googleApiClient = GoogleApiClient.Builder(context!!)
+            .addConnectionCallbacks(this)
+            .addOnConnectionFailedListener(this)
+            .addApi(LocationServices.API)
+            .build()
+        googleApiClient.connect()
 
-                onResume()
-
-                getMapAsync(this@MapFragment)
-
-                layoutParams = ViewGroup.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.MATCH_PARENT
-                )
-            }
-            googleApiClient = GoogleApiClient.Builder(context!!)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .addApi(LocationServices.API)
-                .build()
-            googleApiClient.connect()
-
-        }
-
-        view.frameLayout_mapContainer_Map.addView(mapView)
         binding.executePendingBindings()
 
         return view
@@ -130,7 +114,11 @@ class MapFragment : Fragment(),
         ) {
             Toast.makeText(context, "No Location Permissions", Toast.LENGTH_LONG).show()
         } else {
-            googleMap.isMyLocationEnabled = true
+            googleMap.apply {
+                isMyLocationEnabled = true
+                isBuildingsEnabled = true
+                uiSettings.isZoomControlsEnabled = false
+            }
 //            googleMap.setOnMyLocationButtonClickListener(this)
             //googleMap.setOnMyLocationClickListener(this)
             //googleMap.setOnMapClickListener(this)
@@ -176,9 +164,7 @@ class MapFragment : Fragment(),
 
         val cameraPosition = CameraPosition.Builder().target(latLng).zoom(15f).build()
 
-        //googleMap.moveCamera(CameraUpdateFactory.newLatLng(latLng))
         googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))
-        googleMap.uiSettings.isZoomControlsEnabled = true
     }
 
     override fun onConnectionFailed(p0: ConnectionResult) {
