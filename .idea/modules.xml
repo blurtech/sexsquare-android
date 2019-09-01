@@ -4,7 +4,6 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/Sexsquare.iml" filepath="$PROJECT_DIR$/Sexsquare.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/sexsquare-android.iml" filepath="$PROJECT_DIR$/.idea/sexsquare-android.iml" />
     </modules>
   </component>
 </project>
